@@ -23,6 +23,43 @@ export interface AnalyticsRequest {
   analysisType: string
 }
 
+export interface ForecastRequest {
+  datasetId: string
+  modelId: string
+  horizon: number
+  lookbackWindow: number
+}
+
+export interface ForecastEvaluation {
+  holdoutPoints: number
+  mae: number
+  rmse: number
+  smape: number
+}
+
+export interface ForecastComparison {
+  method: 'seasonal' | 'smoothing' | 'momentum'
+  evaluation: ForecastEvaluation | null
+}
+
+export interface SimulatedOeePoint {
+  timestamp: string
+  hour: number
+  time: string
+  date: string
+  OEE: number
+  availability: number
+  performance: number
+  quality: number
+  shift: string
+  temp: number
+  humidity: number
+  energy_price: number
+  fatigue: number
+  downtime: number
+  predicted_oee: number
+}
+
 export class ApiClient {
   private baseUrl = '/api'
 
@@ -115,6 +152,24 @@ export class ApiClient {
     const data = await response.json()
     if (!response.ok) throw new Error(data.error)
     return data
+  }
+
+  async generateForecast(request: ForecastRequest): Promise<{ forecasts: (SimulatedOeePoint & { lower_oee: number; upper_oee: number })[]; evaluation: ForecastEvaluation | null; comparisons: ForecastComparison[] }> {
+    const response = await fetch(`${this.baseUrl}/forecast`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error)
+    return data
+  }
+
+  async getSimulatedOeeData(hours = 168): Promise<SimulatedOeePoint[]> {
+    const response = await fetch(`${this.baseUrl}/simulation/oee?hours=${hours}`)
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error)
+    return data.data
   }
 }
 

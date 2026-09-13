@@ -2,14 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
+import { profileOeeRows } from '@/lib/time-series'
 
 const DATASETS_DIR = path.join(process.cwd(), 'data', 'datasets')
+const isSafeFileName = (id: string) => id.length > 0 && path.basename(id) === id
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSafeFileName(params.id)) return NextResponse.json({ error: 'Invalid dataset ID' }, { status: 400 })
     const filePath = path.join(DATASETS_DIR, params.id)
     
     if (!fs.existsSync(filePath)) {
@@ -29,7 +32,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
     }
 
-    return NextResponse.json({ data, filename: params.id })
+    const rows = Array.isArray(data) ? data as Record<string, unknown>[] : []
+    return NextResponse.json({ data, filename: params.id, profile: profileOeeRows(rows) })
   } catch (error) {
     console.error('Error reading dataset:', error)
     return NextResponse.json({ error: 'Failed to read dataset' }, { status: 500 })
@@ -41,6 +45,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSafeFileName(params.id)) return NextResponse.json({ error: 'Invalid dataset ID' }, { status: 400 })
     const filePath = path.join(DATASETS_DIR, params.id)
     
     if (!fs.existsSync(filePath)) {

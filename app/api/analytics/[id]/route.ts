@@ -3,12 +3,14 @@ import fs from 'fs'
 import path from 'path'
 
 const MODELS_DIR = path.join(process.cwd(), 'data', 'models')
+const isSafeFileName = (id: string) => id.length > 0 && path.basename(id) === id
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSafeFileName(params.id)) return NextResponse.json({ error: 'Invalid model ID' }, { status: 400 })
     const filePath = path.join(MODELS_DIR, params.id)
     
     if (!fs.existsSync(filePath)) {
@@ -47,6 +49,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!isSafeFileName(params.id)) return NextResponse.json({ error: 'Invalid model ID' }, { status: 400 })
     const filePath = path.join(MODELS_DIR, params.id)
     
     if (!fs.existsSync(filePath)) {

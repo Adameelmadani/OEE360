@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { ApiClient, Dataset, Model } from '@/lib/api'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Upload } from 'lucide-react'
@@ -8,14 +7,6 @@ import { Input } from '@/components/ui/input'
 
 interface DataModelSelectorProps {
   onSelect: (datasetId: string, modelId: string, forecastHorizon: number, lookbackWindow: number) => void
-  onGenerateForecast?: (
-    datasetId: string, 
-    modelId: string, 
-    forecastHorizon: number, 
-    lookbackWindow: number,
-    forecastData?: any[]
-  ) => Promise<any>
-  onToggleLive?: (isLive: boolean) => void  // Add this new prop
   className?: string
   initialForecastHorizon?: number
   initialLookbackWindow?: number
@@ -23,8 +14,6 @@ interface DataModelSelectorProps {
 
 export function DataModelSelector({ 
   onSelect, 
-  onGenerateForecast,
-  onToggleLive,
   className,
   initialForecastHorizon = 24,
   initialLookbackWindow = 24 
@@ -40,8 +29,6 @@ export function DataModelSelector({
   const [error, setError] = useState<string>('')
   const [uploadError, setUploadError] = useState<string>('')
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false)
-  const [generatingForecast, setGeneratingForecast] = useState<boolean>(false)
-  const [forecastError, setForecastError] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const apiClient = new ApiClient()
@@ -58,15 +45,9 @@ export function DataModelSelector({
         apiClient.getModels()
       ])
       setDatasets(datasetsData)
-      
-      // Add predefined models to the fetched models
-      const predefinedModels = [
-        { id: 'sarima_model', name: 'SARIMA Model' },
-        { id: 'lstm_model', name: 'LSTM Model' },
-        { id: 'gru_model', name: 'GRU Model' }
-      ]
-      
-      setModels([...modelsData, ...predefinedModels])
+      // Only show models returned by the API. The old hard-coded choices did
+      // not have corresponding files, so selecting one always failed analysis.
+      setModels(modelsData)
       setError('')
     } catch (err) {
       setError('Failed to load data. Please try again.')
@@ -126,71 +107,6 @@ export function DataModelSelector({
   const handleLoadData = () => {
     if (selectedDataset && selectedModel) {
       onSelect(selectedDataset, selectedModel, forecastHorizon, lookbackWindow)
-    }
-  }
-
-  const handleGenerateForecast = async () => {
-    if (!selectedDataset || !selectedModel) {
-      setForecastError('Please select a dataset and model first')
-      return
-    }
-    
-    try {
-      setGeneratingForecast(true)
-      setForecastError('')
-      
-      // Simulate clicking the Start Live button in parent
-      if (onToggleLive) {
-        // Start live mode
-        onToggleLive(true)
-        
-        // After 10 seconds, stop live mode
-        setTimeout(() => {
-          onToggleLive(false)
-        }, 10000)
-      }
-      
-      if (onGenerateForecast) {
-        // Generate mock forecast data for visualization
-        const currentDate = new Date()
-        const mockForecastData = []
-        
-        // Generate forecast data points for the specified horizon
-        for (let i = 1; i <= forecastHorizon; i++) {
-          const forecastDate = new Date(currentDate)
-          forecastDate.setHours(forecastDate.getHours() + i)
-          
-          // Create a data point with some random variation but with a trend
-          mockForecastData.push({
-            timestamp: forecastDate,
-            time: forecastDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            OEE: 0.75 + (Math.random() * 0.15), // Random OEE between 0.75 and 0.90
-            predicted_oee: 0.78 + (Math.random() * 0.12), // Similar but slightly different
-            availability: 0.82 + (Math.random() * 0.08),
-            performance: 0.80 + (Math.random() * 0.10),
-            quality: 0.88 + (Math.random() * 0.07),
-          })
-        }
-        
-        // Pass the generated forecast data to the parent component for visualization
-        await onGenerateForecast(selectedDataset, selectedModel, forecastHorizon, lookbackWindow, mockForecastData)
-      } else {
-        // Just log if no callback is provided
-        console.log('Generating forecast for:', {
-          dataset: selectedDataset,
-          model: selectedModel,
-          horizon: forecastHorizon,
-          lookback: lookbackWindow
-        })
-        
-        // Wait a short time to simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-      }
-    } catch (err: any) {
-      console.error('Error generating forecast:', err)
-      setForecastError(err.message || 'Failed to generate forecast')
-    } finally {
-      setGeneratingForecast(false)
     }
   }
 
@@ -289,7 +205,7 @@ export function DataModelSelector({
             min={1}
             max={168}
             value={forecastHorizon}
-            onChange={(e) => setForecastHorizon(parseInt(e.target.value) || initialForecastHorizon)}
+            onChange={(e) => setForecastHorizon(Math.min(168, Math.max(1, Number(e.target.value) || initialForecastHorizon)))}
             className="bg-gray-700 border-gray-600"
           />
         </div>
@@ -301,7 +217,7 @@ export function DataModelSelector({
             min={1}
             max={168}
             value={lookbackWindow}
-            onChange={(e) => setLookbackWindow(parseInt(e.target.value) || initialLookbackWindow)}
+            onChange={(e) => setLookbackWindow(Math.min(168, Math.max(1, Number(e.target.value) || initialLookbackWindow)))}
             className="bg-gray-700 border-gray-600"
           />
         </div>
@@ -311,17 +227,7 @@ export function DataModelSelector({
           disabled={!selectedDataset || !selectedModel}
           className="w-full"
         >
-          Load Data
-        </Button>
-        
-        {forecastError && <div className="text-xs text-red-400">{forecastError}</div>}
-        
-        <Button 
-          onClick={handleGenerateForecast}
-          disabled={!selectedDataset || !selectedModel || generatingForecast}
-          className="w-full"
-        >
-          {generatingForecast ? 'Generating...' : 'Generate Forecast'}
+          Apply Dataset & Model
         </Button>
       </div>
     </div>

@@ -1,168 +1,84 @@
-# OEE360 - Data Analytics Platform
+# OEE360 - OEE Analytics Dashboard
 
 **Project by:** Adam El Madani & Mohammed Amine Hssaine  
 **Supervised by:** Tawfik Masrour
 
-OEE360 is a comprehensive data analytics platform that allows users to upload datasets, manage models, and perform various types of analysis. The application features both a modern web interface built with Next.js and a powerful Python Flask backend for data processing.
+OEE360 is a Next.js dashboard for Overall Equipment Effectiveness analysis. The current codebase is React-first and uses local Next.js API routes for dataset, model, and analytics operations.
 
-## Features
+## What It Does
 
-- **Dataset Management**
-  - Upload CSV and JSON datasets
-  - Browse and manage your datasets
-  - Real-time dataset preview
-  
-- **Model Management**
-  - Upload models (JSON, PKL, JOBLIB formats)
-  - Track model metadata and performance metrics
-  - Use predefined models (SARIMA, LSTM, GRU) or upload custom models
+- Visualizes OEE, availability, performance, and quality trends over time
+- Simulates live production data for interactive monitoring
+- Lets you upload CSV and JSON datasets
+- Includes built-in seasonal, smoothing, and momentum forecasting models
+- Profiles uploaded time series and reports chronological holdout metrics (MAE, RMSE, sMAPE)
+- Runs basic analytics through the `/api/analytics` route
+- Provides an `/analyze` page for dataset/model selection and analysis results
 
-- **Data Analysis**
-  - Analyze datasets using selected models
-  - Generate forecasts with configurable parameters
-  - Visualize analysis results
+## Tech Stack
 
-- **Real-time Analytics**
-  - Toggle between static and live data analysis
-  - Adjust forecast horizon and lookback window parameters
-
-## Technology Stack
-
-### Frontend
-
-- Next.js (React framework)
+- Next.js 14
+- React 18
 - TypeScript
-- Shadcn UI components
-- Embla Carousel
+- Tailwind CSS
+- shadcn/ui components
+- Recharts
+- Papa Parse for CSV parsing
 
-### Backend
+## Project Layout
 
-- Flask (Python)
-- Pandas for data processing
-- NumPy for numerical operations
-
-## Project Structure
-
-``` bash
-├── app/                      # Next.js application
-│   ├── analyze/              # Analysis page
-│   ├── api/                  # Next.js API routes
-│       ├── datasets/         # Dataset management API
-│       ├── models/           # Model management API
-├── components/               # React components
-│   ├── ui/                   # UI components
-│   ├── DataModelSelector.tsx # Dataset and model selection component
-├── data/                     # Data storage
-│   ├── datasets/             # Stored datasets
-│   ├── models/               # Stored models
-├── lib/                      # Helper functions
-├── scripts/                  # Python scripts
-│   ├── generate_datasets.py  # Generate sample datasets
-│   ├── train_models.py       # Train sample models
-├── app.py                    # Flask backend
+```text
+app/
+  page.tsx                # Main OEE dashboard
+  analyze/page.tsx        # Dataset/model analysis page
+  api/                    # Next.js API routes
+components/               # Shared React components
+lib/                      # API client and utilities
+data/datasets/            # Uploaded datasets
+data/models/              # Uploaded models
+public/                   # Static assets
+styles/                   # Global styles
 ```
 
-## Installation
+## Getting Started
 
-### Prerequisites
+### Requirements
 
-- Node.js (v16+)
-- Python (v3.8+)
-- npm or yarn
+- Node.js 18+
+- pnpm
 
-### Setup
-
-1. Clone the repository
-
-   ```bash
-   git clone https://github.com/medaminehssaine/OEE360.git
-   cd OEE360
-   ```
-
-2. Install frontend dependencies
-
-   ```bash
-   npm install
-   ```
-
-3. Create Python virtual environment
-
-   ```bash
-   # Create virtual environment
-   python -m venv env
-   
-   # Activate virtual environment (Windows)
-   env\Scripts\activate.bat
-   # OR for Mac/Linux:
-   # source env/bin/activate
-   ```
-
-4. Install Python packages
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. Generate sample datasets and train models
-
-   ```bash
-   python scripts/generate_datasets.py
-   python scripts/train_models.py
-   ```
-
-## Usage
-
-1. Start the Flask backend
-
-   ```bash
-   python app.py
-   ```
-
-2. In a separate terminal, start the Next.js development server
-
-   ```bash
-   npm run dev
-   ```
-
-3. Open your browser and navigate to `http://localhost:3000`
-
-## API Documentation
-
-### Dataset API
-
-- `GET /api/datasets` - List all datasets
-- `POST /api/datasets` - Upload a new dataset
-- `GET /api/datasets/:id` - Get a specific dataset
-- `DELETE /api/datasets/:id` - Delete a dataset
-
-### Model API
-
-- `GET /api/models` - List all models
-- `POST /api/models` - Upload a new model
-- `DELETE /api/models/:id` - Delete a model
-
-### Analytics API
-
-- `POST /api/analytics` - Run analysis with selected dataset and model
-
-## Development
-
-### Adding New Features
-
-1. Backend Features:
-   - Add new routes to `app.py`
-   - Create corresponding API endpoints in Next.js API routes
-
-2. Frontend Features:
-   - Add new pages in the `app` directory
-   - Create components in the `components` directory
-
-### Running Tests
+### Install
 
 ```bash
-# Run frontend tests
-npm test
+pnpm install
+```
 
-# Run backend tests
-python -m pytest
+### Run locally
+
+```bash
+pnpm dev
+```
+
+Open `http://localhost:3000`.
+
+## Useful Commands
+
+```bash
+pnpm build
+pnpm start
+pnpm lint
+```
+
+## Data Storage
+
+Uploaded datasets and models are stored under `data/datasets` and `data/models`. The API routes create these folders automatically if they are missing.
+
+If the folders are empty, the backend seeds simulated OEE datasets and built-in forecasting model definitions automatically so the dashboard and analysis page have data on first run.
+
+The main dashboard also loads simulated OEE time-series data from the backend via `/api/simulation/oee`, with a local fallback only if the backend request fails.
+
+## Notes
+
+- The old Flask and Streamlit-era files have been removed.
+- Python is no longer required for the current app flow.
 ```

@@ -1,6 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+export const dynamic = "force-dynamic"
+
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -42,7 +44,10 @@ import {
   Pause,
 } from "lucide-react"
 import { DataModelSelector } from "@/components/DataModelSelector"
-import { ApiClient } from "@/lib/api"
+import { ApiClient, SimulatedOeePoint, type ForecastEvaluation } from "@/lib/api"
+import { normalizeOeeRows, type DataProfile } from "@/lib/time-series"
+
+const apiClient = new ApiClient()
 
 // Generate comprehensive sample data
 const generateOEEData = () => {
@@ -136,15 +141,64 @@ export default function Home() {
   const [dateRange, setDateRange] = useState("7d")
   const [forecastHorizon, setForecastHorizon] = useState([24])
   const [lookbackWindow, setLookbackWindow] = useState([24])
-  const [modelType, setModelType] = useState("LSTM")
   
-  // New state variables
   const [datasetId, setDatasetId] = useState<string>("")
   const [modelId, setModelId] = useState<string>("")
-  const [analysisResults, setAnalysisResults] = useState<any>(null)
-  const [analysisLoading, setAnalysisLoading] = useState<boolean>(false)
-  const [analysisError, setAnalysisError] = useState<string>("")
-  const [showDataSelector, setShowDataSelector] = useState<boolean>(false)
+  const [forecastData, setForecastData] = useState<any[] | null>(null)
+  const [forecastLoading, setForecastLoading] = useState<boolean>(false)
+  const [forecastError, setForecastError] = useState<string>("")
+  const [forecastEvaluation, setForecastEvaluation] = useState<ForecastEvaluation | null>(null)
+  const [dataProfile, setDataProfile] = useState<DataProfile | null>(null)
+  const [dataLoadError, setDataLoadError] = useState<string>("")
+
+  const normalizeSimulatedData = (points: SimulatedOeePoint[]) => {
+    return points.map((point) => ({
+      ...point,
+      timestamp: new Date(point.timestamp),
+    }))
+  }
+
+  const loadSimulatedData = useCallback(async () => {
+    try {
+      const simulatedData = await apiClient.getSimulatedOeeData(168)
+      setData(normalizeSimulatedData(simulatedData) as any)
+      setForecastData(null)
+    } catch (error) {
+      console.error("Failed to load backend simulated data:", error)
+      setData(generateOEEData())
+      setForecastData(null)
+    }
+  }, [])
+
+  const handleForecastGenerated = useCallback(
+    async (selectedDatasetId: string, selectedModelId: string, horizon: number, selectedLookbackWindow: number) => {
+      setForecastLoading(true)
+      setForecastError("")
+
+      try {
+        const response = await apiClient.generateForecast({
+          datasetId: selectedDatasetId,
+          modelId: selectedModelId,
+          horizon,
+          lookbackWindow: selectedLookbackWindow,
+        })
+        const forecastSeries = normalizeSimulatedData(response.forecasts)
+        setForecastData(forecastSeries)
+        setForecastEvaluation(response.evaluation)
+        return forecastSeries
+      } catch (error: any) {
+        setForecastError(error.message || "Forecast generation failed")
+        return []
+      } finally {
+        setForecastLoading(false)
+      }
+    },
+    []
+  )
+
+  useEffect(() => {
+    void loadSimulatedData()
+  }, [loadSimulatedData])
 
   // Live data simulation
   useEffect(() => {
@@ -206,13 +260,22 @@ export default function Home() {
     variables.forEach((var1) => {
       matrix[var1] = {}
       variables.forEach((var2) => {
-        const x = filteredData.map((d) => d[var1])
-        const y = filteredData.map((d) => d[var2])
+        const x = filteredData.map((d) => (d as Record<string, number>)[var1])
+        const y = filteredData.map((d) => (d as Record<string, number>)[var2])
         matrix[var1][var2] = calculateCorrelation(x, y)
       })
     })
 
     return matrix
+  }, [filteredData])
+
+  const shiftPerformance = useMemo(() => {
+    return ["Day", "Evening", "Night"].map((shift) => {
+      const points = filteredData.filter(point => point.shift === shift)
+      const average = (key: "OEE" | "availability" | "performance" | "quality") =>
+        points.length ? points.reduce((sum, point) => sum + point[key], 0) / points.length * 100 : 0
+      return { shift, oee: average("OEE"), availability: average("availability"), performance: average("performance"), quality: average("quality") }
+    })
   }, [filteredData])
 
   // Generate recommendations
@@ -320,12 +383,12 @@ export default function Home() {
           const existing = acc.find((d) => d.date === date)
           if (existing) {
             selectedVariables.forEach((variable) => {
-              existing[variable] = (existing[variable] + curr[variable]) / 2
+              existing[variable] = (existing[variable] + (curr as Record<string, number>)[variable]) / 2
             })
           } else {
             const newEntry: any = { date }
             selectedVariables.forEach((variable) => {
-              newEntry[variable] = curr[variable]
+              newEntry[variable] = (curr as Record<string, number>)[variable]
             })
             acc.push(newEntry)
           }
@@ -422,29 +485,37 @@ export default function Home() {
   }
 
   // New function to handle data and model selection
-  const handleDataModelSelect = async (selectedDatasetId: string, selectedModelId: string) => {
+  const handleDataModelSelect = async (
+    selectedDatasetId: string,
+    selectedModelId: string,
+    selectedForecastHorizon: number,
+    selectedLookbackWindow: number
+  ) => {
     setDatasetId(selectedDatasetId)
     setModelId(selectedModelId)
-    setShowDataSelector(false)
-    
+    setForecastHorizon([selectedForecastHorizon])
+    setLookbackWindow([selectedLookbackWindow])
+    setForecastData(null)
+    setForecastEvaluation(null)
     try {
-      setAnalysisLoading(true)
-      setAnalysisError("")
-      
-      const apiClient = new ApiClient()
-      const results = await apiClient.runAnalytics({
-        datasetId: selectedDatasetId,
-        modelId: selectedModelId,
-        analysisType: "basic"
-      })
-      
-      setAnalysisResults(results)
+      setDataLoadError("")
+      const dataset = await apiClient.getDataset(selectedDatasetId)
+      const normalized = normalizeOeeRows(dataset.data)
+      if (!normalized.length) throw new Error("No valid timestamp and OEE values were found in this dataset")
+      setData(normalized.map(point => ({ ...point, timestamp: new Date(point.timestamp) })) as any)
+      setDataProfile(dataset.profile ?? null)
     } catch (err: any) {
-      setAnalysisError(err.message || "An error occurred during analysis")
-      console.error("Analysis error:", err)
-    } finally {
-      setAnalysisLoading(false)
+      setDataLoadError(err.message || "Unable to load the selected dataset")
     }
+  }
+
+  const handleForecastClick = async () => {
+    if (!datasetId || !modelId) {
+      setForecastData(null)
+      return
+    }
+
+    await handleForecastGenerated(datasetId, modelId, forecastHorizon[0], lookbackWindow[0])
   }
 
   if (!currentMetrics) {
@@ -473,9 +544,9 @@ export default function Home() {
                 {isLive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 <span>{isLive ? "Stop Live" : "Start Live"}</span>
               </Button>
-              <Button variant="outline" onClick={() => setData(generateOEEData())}>
+              <Button variant="outline" onClick={() => void loadSimulatedData()}>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                Refresh Backend Data
               </Button>
             </div>
           </div>
@@ -736,6 +807,8 @@ export default function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {dataLoadError && <p className="mb-3 text-sm text-red-400">{dataLoadError}</p>}
+                {dataProfile?.warnings.map(warning => <p key={warning} className="mb-2 text-sm text-amber-300">Data quality: {warning}</p>)}
                 {datasetId && modelId ? (
                   renderChart()
                 ) : (
@@ -771,13 +844,7 @@ export default function Home() {
                     </CardHeader>
                     <CardContent>
                       <ResponsiveContainer width="100%" height={200}>
-                        <BarChart
-                          data={[
-                            { shift: "Day", oee: 82.5, availability: 88.2, performance: 85.1, quality: 91.3 },
-                            { shift: "Evening", oee: 78.9, availability: 84.7, performance: 82.3, quality: 89.8 },
-                            { shift: "Night", oee: 74.2, availability: 81.5, performance: 79.6, quality: 87.4 },
-                          ]}
-                        >
+                        <BarChart data={shiftPerformance}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                           <XAxis dataKey="shift" stroke="#9ca3af" />
                           <YAxis stroke="#9ca3af" />
@@ -931,21 +998,31 @@ export default function Home() {
                   <CardHeader>
                     <CardTitle className="text-white">OEE Forecasting</CardTitle>
                     <CardDescription className="text-gray-400">
-                      {forecastHorizon[0]}-hour forecast using {modelType} model
+                      {forecastHorizon[0]}-hour forecast using the selected model
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="mb-4">
-                      <Button className="w-full">Generate Forecast</Button>
+                      <Button
+                        className="w-full"
+                        onClick={handleForecastClick}
+                        disabled={!datasetId || !modelId || forecastLoading}
+                      >
+                        {forecastLoading ? "Generating Forecast..." : "Generate Forecast"}
+                      </Button>
+                      {forecastError && <p className="mt-2 text-sm text-red-400">{forecastError}</p>}
+                      {forecastEvaluation && (
+                        <p className="mt-2 text-sm text-gray-300">
+                          Holdout backtest ({forecastEvaluation.holdoutPoints} points): MAE {(forecastEvaluation.mae * 100).toFixed(2)}%, RMSE {(forecastEvaluation.rmse * 100).toFixed(2)}%, sMAPE {forecastEvaluation.smape.toFixed(2)}%
+                        </p>
+                      )}
                     </div>
-                    <ResponsiveContainer width="100%" height={300}>
+                    {forecastData?.length ? <ResponsiveContainer width="100%" height={300}>
                       <LineChart
-                        data={filteredData.slice(-48).map((d) => ({
+                        data={(forecastData && forecastData.length > 0 ? forecastData : filteredData.slice(-48)).map((d) => ({
                           time: d.time,
                           actual: d.OEE * 100,
                           forecast: d.predicted_oee * 100,
-                          upper: d.predicted_oee * 100 + 5,
-                          lower: d.predicted_oee * 100 - 5,
                         }))}
                       >
                         <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -959,8 +1036,6 @@ export default function Home() {
                             color: "#f9fafb",
                           }}
                         />
-                        <Area dataKey="upper" fill="#3b82f6" fillOpacity={0.1} stroke="none" />
-                        <Area dataKey="lower" fill="#3b82f6" fillOpacity={0.1} stroke="none" />
                         <Line type="monotone" dataKey="actual" stroke="#3b82f6" strokeWidth={2} dot={false} />
                         <Line
                           type="monotone"
@@ -971,31 +1046,59 @@ export default function Home() {
                           dot={false}
                         />
                       </LineChart>
-                    </ResponsiveContainer>
+                    </ResponsiveContainer> : (
+                      <div className="flex h-[300px] items-center justify-center rounded border border-dashed border-gray-600 text-sm text-gray-400">
+                        Generate a forecast to view predictions and backtest metrics.
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-4 gap-4 mt-4">
                       <div className="text-center">
                         <p className="text-sm text-gray-400">Min Forecast</p>
                         <p className="text-lg font-bold text-white">
-                          <DynamicValue value={68.2} fallback="--" format={(val) => `${val}%`} />
+                          <DynamicValue
+                            value={forecastData?.length ? Math.min(...forecastData.map((point) => point.predicted_oee * 100)) : null}
+                            fallback="--"
+                            format={(val) => `${val.toFixed(1)}%`}
+                          />
                         </p>
                       </div>
                       <div className="text-center">
                         <p className="text-sm text-gray-400">Max Forecast</p>
                         <p className="text-lg font-bold text-white">
-                          <DynamicValue value={84.7} fallback="--" format={(val) => `${val}%`} />
+                          <DynamicValue
+                            value={forecastData?.length ? Math.max(...forecastData.map((point) => point.predicted_oee * 100)) : null}
+                            fallback="--"
+                            format={(val) => `${val.toFixed(1)}%`}
+                          />
                         </p>
                       </div>
                       <div className="text-center">
                         <p className="text-sm text-gray-400">Mean Forecast</p>
                         <p className="text-lg font-bold text-white">
-                          <DynamicValue value={76.4} fallback="--" format={(val) => `${val}%`} />
+                          <DynamicValue
+                            value={
+                              forecastData?.length
+                                ? forecastData.reduce((sum, point) => sum + point.predicted_oee * 100, 0) / forecastData.length
+                                : null
+                            }
+                            fallback="--"
+                            format={(val) => `${val.toFixed(1)}%`}
+                          />
                         </p>
                       </div>
                       <div className="text-center">
                         <p className="text-sm text-gray-400">Trend</p>
                         <p className="text-lg font-bold text-green-400">
-                          <DynamicValue value={2.1} fallback="--" format={(val) => `+${val}%`} />
+                          <DynamicValue
+                            value={
+                              forecastData && forecastData.length > 1
+                                ? (forecastData[forecastData.length - 1].predicted_oee - forecastData[0].predicted_oee) * 100
+                                : null
+                            }
+                            fallback="--"
+                            format={(val) => `${val > 0 ? "+" : ""}${val.toFixed(1)}%`}
+                          />
                         </p>
                       </div>
                     </div>

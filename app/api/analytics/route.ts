@@ -3,11 +3,13 @@ import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
 
+const isSafeFileName = (id: unknown) => typeof id === 'string' && id.length > 0 && path.basename(id) === id
+
 export async function POST(request: NextRequest) {
   try {
     const { datasetId, modelId, analysisType } = await request.json()
 
-    if (!datasetId || !modelId) {
+    if (!isSafeFileName(datasetId) || !isSafeFileName(modelId)) {
       return NextResponse.json({ 
         error: 'Dataset ID and Model ID are required' 
       }, { status: 400 })
@@ -62,7 +64,7 @@ function performBasicAnalytics(data: any[], analysisType: string) {
     rowCount: data.length,
     timestamp: new Date().toISOString(),
     analysisType,
-    summary: {}
+    summary: {} as Record<string, { mean: number; min: number; max: number; count: number }>
   }
 
   // Calculate basic statistics

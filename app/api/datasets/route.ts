@@ -1,15 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { generateSimulatedOeeData, simulatedOeeCsv } from '@/lib/oee-simulation'
 
 const DATASETS_DIR = path.join(process.cwd(), 'data', 'datasets')
+
+function seedDatasetsIfNeeded() {
+  if (!fs.existsSync(DATASETS_DIR)) {
+    fs.mkdirSync(DATASETS_DIR, { recursive: true })
+  }
+
+  const hasDatasetFiles = fs
+    .readdirSync(DATASETS_DIR)
+    .some(file => file.endsWith('.csv') || file.endsWith('.json'))
+
+  if (hasDatasetFiles) {
+    return
+  }
+
+  const simulatedData = generateSimulatedOeeData(168)
+
+  fs.writeFileSync(path.join(DATASETS_DIR, 'simulated_oee.csv'), simulatedOeeCsv(168))
+  fs.writeFileSync(path.join(DATASETS_DIR, 'simulated_oee.json'), JSON.stringify(simulatedData, null, 2))
+}
 
 export async function GET(request: NextRequest) {
   try {
     // Ensure datasets directory exists
-    if (!fs.existsSync(DATASETS_DIR)) {
-      fs.mkdirSync(DATASETS_DIR, { recursive: true })
-    }
+    seedDatasetsIfNeeded()
 
     // Check if we're requesting a specific dataset
     const url = new URL(request.url)

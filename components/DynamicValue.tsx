@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 interface DynamicValueProps {
   value: number | string | null | undefined
   fallback?: string
-  format?: (value: number | string) => string
+  format?: (value: number) => string
   className?: string
   animate?: boolean
   precision?: number
@@ -36,7 +36,7 @@ export function DynamicValue({
     const timer = setTimeout(() => {
       let formattedValue: string
 
-      if (format && typeof format === 'function') {
+      if (format && typeof value === 'number') {
         formattedValue = format(value)
       } else if (typeof value === 'number') {
         formattedValue = value.toFixed(precision)
@@ -127,7 +127,7 @@ export function AnimatedDynamicValue({
     const timer = setTimeout(() => {
       let formattedValue: string
 
-      if (format && typeof format === 'function') {
+      if (format && typeof value === 'number') {
         formattedValue = format(value)
       } else if (typeof value === 'number') {
         formattedValue = value.toFixed(1)
