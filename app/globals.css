@@ -4,31 +4,30 @@
 
 @layer base {
   :root {
-    /* Light theme: white background, dark foreground, blue primary */
-    --background: 0 0% 100%; /* white */
-    --foreground: 220 11% 12%; /* dark slate */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 220 11% 12%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 11% 12%;
-    --primary: 212 100% 50%; /* blue */
-    --primary-foreground: 0 0% 100%; /* white text on primary */
-    --secondary: 210 20% 94%; /* very light blue/gray */
-    --secondary-foreground: 220 11% 12%;
-    --muted: 210 18% 96%;
-    --muted-foreground: 215 20% 50%;
-    --accent: 210 15% 92%;
-    --accent-foreground: 220 11% 12%;
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 210 16% 92%;
-    --input: 210 16% 94%;
-    --ring: 212 100% 88%;
-    --chart-1: 212 90% 56%;
-    --chart-2: 175 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 260 65% 60%;
-    --chart-5: 340 75% 55%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --chart-1: 221.2 83.2% 53.3%;
+    --chart-2: 212 95% 68%;
+    --chart-3: 216 92% 60%;
+    --chart-4: 210 98% 78%;
+    --chart-5: 212 97% 87%;
     --radius: 0.5rem;
   }
 }
@@ -48,14 +47,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9; /* light gray */
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6; /* blue-500 */
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #60a5fa; /* blue-400 */
+  background: #94a3b8;
 }

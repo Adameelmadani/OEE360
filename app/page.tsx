@@ -351,15 +351,15 @@ export default function Home() {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="time" stroke="#9ca3af" fontSize={12} />
-              <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+              <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
+              <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
+                  backgroundColor: "#f8fbff",
+                  border: "1px solid #dbeafe",
                   borderRadius: "8px",
-                  color: "#f9fafb",
+                  color: "#0f172a",
                 }}
               />
               {selectedVariables.map((variable, index) => (
@@ -398,15 +398,15 @@ export default function Home() {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={dailyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
-              <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+              <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
+              <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
+                  backgroundColor: "#f8fbff",
+                  border: "1px solid #dbeafe",
                   borderRadius: "8px",
-                  color: "#f9fafb",
+                  color: "#0f172a",
                 }}
               />
               {selectedVariables.map((variable) => (
@@ -421,15 +421,15 @@ export default function Home() {
           return (
             <ResponsiveContainer width="100%" height={400}>
               <ScatterChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey={selectedVariables[0]} stroke="#9ca3af" fontSize={12} domain={[0, 100]} />
-                <YAxis dataKey={selectedVariables[1]} stroke="#9ca3af" fontSize={12} domain={[0, 100]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+                <XAxis dataKey={selectedVariables[0]} stroke="#64748b" fontSize={12} domain={[0, 100]} />
+                <YAxis dataKey={selectedVariables[1]} stroke="#64748b" fontSize={12} domain={[0, 100]} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "1px solid #374151",
+                    backgroundColor: "#f8fbff",
+                    border: "1px solid #dbeafe",
                     borderRadius: "8px",
-                    color: "#f9fafb",
+                    color: "#0f172a",
                   }}
                 />
                 <Scatter dataKey={selectedVariables[1]} fill={colors[selectedVariables[0] as keyof typeof colors]} />
@@ -438,7 +438,7 @@ export default function Home() {
           )
         }
         return (
-          <div className="flex items-center justify-center h-96 text-gray-400">
+          <div className="flex items-center justify-center h-96 text-slate-500">
             Select at least 2 variables for scatter plot
           </div>
         )
@@ -447,15 +447,15 @@ export default function Home() {
         return (
           <ResponsiveContainer width="100%" height={400}>
             <ComposedChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="time" stroke="#9ca3af" fontSize={12} />
-              <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+              <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
+              <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1f2937",
-                  border: "1px solid #374151",
+                  backgroundColor: "#f8fbff",
+                  border: "1px solid #dbeafe",
                   borderRadius: "8px",
-                  color: "#f9fafb",
+                  color: "#0f172a",
                 }}
               />
               {selectedVariables.map((variable) => (
@@ -487,14 +487,10 @@ export default function Home() {
   // New function to handle data and model selection
   const handleDataModelSelect = async (
     selectedDatasetId: string,
-    selectedModelId: string,
-    selectedForecastHorizon: number,
-    selectedLookbackWindow: number
+    selectedModelId: string
   ) => {
     setDatasetId(selectedDatasetId)
     setModelId(selectedModelId)
-    setForecastHorizon([selectedForecastHorizon])
-    setLookbackWindow([selectedLookbackWindow])
     setForecastData(null)
     setForecastEvaluation(null)
     try {
@@ -523,16 +519,16 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60">
+      <header className="border-b border-blue-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Factory className="h-8 w-8 text-blue-400" />
+              <Factory className="h-8 w-8 text-blue-600" />
               <div>
-                <h1 className="text-2xl font-bold text-white">🏭 OEE Analytics Dashboard</h1>
-                <p className="text-sm text-gray-400">Overall Equipment Effectiveness Analysis & Forecasting</p>
+                <h1 className="text-2xl font-bold text-slate-900">OEE Analytics Dashboard</h1>
+                <p className="text-sm text-slate-600">Overall Equipment Effectiveness Analysis & Forecasting</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -557,21 +553,21 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Controls */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-white border-blue-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <Settings className="h-5 w-5 mr-2" />
+                <CardTitle className="text-slate-900 flex items-center">
+                  <Settings className="h-5 w-5 mr-2 text-blue-600" />
                   Dashboard Controls
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Time Period</label>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Time Period</label>
                   <Select value={dateRange} onValueChange={setDateRange}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600">
+                    <SelectTrigger className="bg-blue-50 border-blue-200 text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="bg-white border-blue-100">
                       <SelectItem value="24h">Last 24 Hours</SelectItem>
                       <SelectItem value="7d">Last 7 Days</SelectItem>
                       <SelectItem value="30d">Last 30 Days</SelectItem>
@@ -580,12 +576,12 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Chart Type</label>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Chart Type</label>
                   <Select value={chartType} onValueChange={setChartType}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600">
+                    <SelectTrigger className="bg-blue-50 border-blue-200 text-slate-900">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
+                    <SelectContent className="bg-white border-blue-100">
                       <SelectItem value="line">Line Chart</SelectItem>
                       <SelectItem value="area">Area Chart</SelectItem>
                       <SelectItem value="bar">Bar Chart</SelectItem>
@@ -595,7 +591,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-3 block">Variables</label>
+                  <label className="text-sm font-medium text-slate-700 mb-3 block">Variables</label>
                   <div className="space-y-2">
                     {["OEE", "availability", "performance", "quality", "temp", "humidity"].map((variable) => (
                       <div key={variable} className="flex items-center space-x-2">
@@ -610,7 +606,7 @@ export default function Home() {
                             }
                           }}
                         />
-                        <label htmlFor={variable} className="text-sm text-gray-300 capitalize">
+                        <label htmlFor={variable} className="text-sm text-slate-700 capitalize">
                           {variable.replace("_", " ")}
                         </label>
                       </div>
@@ -618,18 +614,18 @@ export default function Home() {
                   </div>
                 </div>
 
-                <Separator className="bg-gray-700" />
+                <Separator className="bg-blue-100" />
 
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Data & Model Selection</label>
+                  <label className="text-sm font-medium text-slate-700 mb-2 block">Data & Model Selection</label>
                   <DataModelSelector 
                     onSelect={handleDataModelSelect} 
-                    className="mb-4 bg-gray-700 p-3 rounded-md"
+                    className="mb-4 bg-blue-50 p-3 rounded-md border border-blue-100"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-gray-400 mb-1 block">
+                  <label className="text-xs text-slate-600 mb-1 block">
                     Forecast Horizon: <DynamicValue value={forecastHorizon[0]} fallback="--" format={(val) => `${val}h`} />
                   </label>
                   <Slider
@@ -643,7 +639,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="text-xs text-gray-400 mb-1 block">
+                  <label className="text-xs text-slate-600 mb-1 block">
                     Lookback Window: <DynamicValue value={lookbackWindow[0]} fallback="--" format={(val) => `${val}h`} />
                   </label>
                   <Slider
@@ -663,12 +659,12 @@ export default function Home() {
           <div className="lg:col-span-3 space-y-6">
             {/* Metrics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-white border-blue-100 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Average OEE</p>
-                      <p className="text-2xl font-bold text-blue-400">
+                      <p className="text-sm font-medium text-slate-600">Average OEE</p>
+                      <p className="text-2xl font-bold text-blue-600">
                         <DynamicValue 
                           value={currentMetrics.oee * 100} 
                           fallback="--"
@@ -679,9 +675,9 @@ export default function Home() {
                         {currentMetrics.oee_trend > 0 ? (
                           <TrendingUp className="h-4 w-4 text-green-400 mr-1" />
                         ) : (
-                          <TrendingDown className="h-4 w-4 text-red-400 mr-1" />
+                          <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                         )}
-                        <span className={`text-sm ${currentMetrics.oee_trend > 0 ? "text-green-400" : "text-red-400"}`}>
+                        <span className={`text-sm ${currentMetrics.oee_trend > 0 ? "text-green-400" : "text-red-500"}`}>
                           <DynamicValue 
                             value={currentMetrics.oee_trend} 
                             fallback="--"
@@ -690,17 +686,17 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <Activity className="h-8 w-8 text-blue-400" />
+                    <Activity className="h-8 w-8 text-blue-600" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-white border-blue-100 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Availability</p>
-                      <p className="text-2xl font-bold text-purple-400">
+                      <p className="text-sm font-medium text-slate-600">Availability</p>
+                      <p className="text-2xl font-bold text-violet-600">
                         <DynamicValue 
                           value={currentMetrics.availability * 100} 
                           fallback="--"
@@ -711,10 +707,10 @@ export default function Home() {
                         {currentMetrics.availability_trend > 0 ? (
                           <TrendingUp className="h-4 w-4 text-green-400 mr-1" />
                         ) : (
-                          <TrendingDown className="h-4 w-4 text-red-400 mr-1" />
+                          <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                         )}
                         <span
-                          className={`text-sm ${currentMetrics.availability_trend > 0 ? "text-green-400" : "text-red-400"}`}
+                          className={`text-sm ${currentMetrics.availability_trend > 0 ? "text-green-400" : "text-red-500"}`}
                         >
                           <DynamicValue 
                             value={currentMetrics.availability_trend} 
@@ -724,17 +720,17 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <Clock className="h-8 w-8 text-purple-400" />
+                    <Clock className="h-8 w-8 text-violet-500" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-white border-blue-100 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Performance</p>
-                      <p className="text-2xl font-bold text-cyan-400">
+                      <p className="text-sm font-medium text-slate-600">Performance</p>
+                      <p className="text-2xl font-bold text-cyan-600">
                         <DynamicValue 
                           value={currentMetrics.performance * 100} 
                           fallback="--"
@@ -745,10 +741,10 @@ export default function Home() {
                         {currentMetrics.performance_trend > 0 ? (
                           <TrendingUp className="h-4 w-4 text-green-400 mr-1" />
                         ) : (
-                          <TrendingDown className="h-4 w-4 text-red-400 mr-1" />
+                          <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                         )}
                         <span
-                          className={`text-sm ${currentMetrics.performance_trend > 0 ? "text-green-400" : "text-red-400"}`}
+                          className={`text-sm ${currentMetrics.performance_trend > 0 ? "text-green-400" : "text-red-500"}`}
                         >
                           <DynamicValue 
                             value={currentMetrics.performance_trend} 
@@ -758,17 +754,17 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <Zap className="h-8 w-8 text-cyan-400" />
+                    <Zap className="h-8 w-8 text-cyan-500" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-800 border-gray-700">
+              <Card className="bg-white border-blue-100 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-400">Quality</p>
-                      <p className="text-2xl font-bold text-green-400">
+                      <p className="text-sm font-medium text-slate-600">Quality</p>
+                      <p className="text-2xl font-bold text-emerald-600">
                         <DynamicValue 
                           value={currentMetrics.quality * 100} 
                           fallback="--"
@@ -779,10 +775,10 @@ export default function Home() {
                         {currentMetrics.quality_trend > 0 ? (
                           <TrendingUp className="h-4 w-4 text-green-400 mr-1" />
                         ) : (
-                          <TrendingDown className="h-4 w-4 text-red-400 mr-1" />
+                          <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                         )}
                         <span
-                          className={`text-sm ${currentMetrics.quality_trend > 0 ? "text-green-400" : "text-red-400"}`}
+                          className={`text-sm ${currentMetrics.quality_trend > 0 ? "text-green-400" : "text-red-500"}`}
                         >
                           <DynamicValue 
                             value={currentMetrics.quality_trend} 
@@ -792,27 +788,27 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <CheckCircle className="h-8 w-8 text-green-400" />
+                    <CheckCircle className="h-8 w-8 text-emerald-500" />
                   </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Main Chart */}
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-white border-blue-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-white">OEE Trend & Analysis</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="text-slate-900">OEE Trend & Analysis</CardTitle>
+                <CardDescription className="text-slate-600">
                   Real-time monitoring with predictive insights
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {dataLoadError && <p className="mb-3 text-sm text-red-400">{dataLoadError}</p>}
-                {dataProfile?.warnings.map(warning => <p key={warning} className="mb-2 text-sm text-amber-300">Data quality: {warning}</p>)}
+                {dataLoadError && <p className="mb-3 text-sm text-red-500">{dataLoadError}</p>}
+                {dataProfile?.warnings.map(warning => <p key={warning} className="mb-2 text-sm text-amber-600">Data quality: {warning}</p>)}
                 {datasetId && modelId ? (
                   renderChart()
                 ) : (
-                  <div className="flex items-center justify-center h-64 text-gray-400">
+                  <div className="flex items-center justify-center h-64 text-slate-500">
                     Please select a dataset and model from the controls section to view analysis
                   </div>
                 )}
@@ -821,39 +817,39 @@ export default function Home() {
 
             {/* Tabs for detailed analysis */}
             <Tabs defaultValue="analysis" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-gray-800">
-                <TabsTrigger value="analysis" className="data-[state=active]:bg-gray-700">
+              <TabsList className="grid w-full grid-cols-4 bg-blue-50 border border-blue-100">
+                <TabsTrigger value="analysis" className="data-[state=active]:bg-white data-[state=active]:text-blue-700">
                   Analysis
                 </TabsTrigger>
-                <TabsTrigger value="correlations" className="data-[state=active]:bg-gray-700">
+                <TabsTrigger value="correlations" className="data-[state=active]:bg-white data-[state=active]:text-blue-700">
                   Correlations
                 </TabsTrigger>
-                <TabsTrigger value="recommendations" className="data-[state=active]:bg-gray-700">
+                <TabsTrigger value="recommendations" className="data-[state=active]:bg-white data-[state=active]:text-blue-700">
                   Recommendations
                 </TabsTrigger>
-                <TabsTrigger value="forecasting" className="data-[state=active]:bg-gray-700">
+                <TabsTrigger value="forecasting" className="data-[state=active]:bg-white data-[state=active]:text-blue-700">
                   Forecasting
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="analysis" className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="bg-gray-800 border-gray-700">
+                  <Card className="bg-white border-blue-100 shadow-sm">
                     <CardHeader>
-                      <CardTitle className="text-white text-lg">Shift Performance</CardTitle>
+                      <CardTitle className="text-slate-900 text-lg">Shift Performance</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={shiftPerformance}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                          <XAxis dataKey="shift" stroke="#9ca3af" />
-                          <YAxis stroke="#9ca3af" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+                          <XAxis dataKey="shift" stroke="#64748b" />
+                          <YAxis stroke="#64748b" />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: "#1f2937",
-                              border: "1px solid #374151",
+                              backgroundColor: "#f8fbff",
+                              border: "1px solid #dbeafe",
                               borderRadius: "8px",
-                              color: "#f9fafb",
+                              color: "#0f172a",
                             }}
                           />
                           <Bar dataKey="oee" fill="#3b82f6" />
@@ -862,9 +858,9 @@ export default function Home() {
                     </CardContent>
                   </Card>
 
-                  <Card className="bg-gray-800 border-gray-700">
+                  <Card className="bg-white border-blue-100 shadow-sm">
                     <CardHeader>
-                      <CardTitle className="text-white text-lg">Environmental Impact</CardTitle>
+                      <CardTitle className="text-slate-900 text-lg">Environmental Impact</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ResponsiveContainer width="100%" height={200}>
@@ -875,15 +871,15 @@ export default function Home() {
                             humidity: d.humidity,
                           }))}
                         >
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                          <XAxis dataKey="temp" stroke="#9ca3af" />
-                          <YAxis dataKey="oee" stroke="#9ca3af" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+                          <XAxis dataKey="temp" stroke="#64748b" />
+                          <YAxis dataKey="oee" stroke="#64748b" />
                           <Tooltip
                             contentStyle={{
-                              backgroundColor: "#1f2937",
-                              border: "1px solid #374151",
+                              backgroundColor: "#f8fbff",
+                              border: "1px solid #dbeafe",
                               borderRadius: "8px",
-                              color: "#f9fafb",
+                              color: "#0f172a",
                             }}
                           />
                           <Scatter dataKey="oee" fill="#10b981" />
@@ -895,10 +891,10 @@ export default function Home() {
               </TabsContent>
 
               <TabsContent value="correlations" className="space-y-4">
-                <Card className="bg-gray-800 border-gray-700">
+                <Card className="bg-white border-blue-100 shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-white">Correlation Matrix</CardTitle>
-                    <CardDescription className="text-gray-400">
+                    <CardTitle className="text-slate-900">Correlation Matrix</CardTitle>
+                    <CardDescription className="text-slate-600">
                       Relationships between different variables
                     </CardDescription>
                   </CardHeader>
@@ -906,11 +902,11 @@ export default function Home() {
                     <div className="grid grid-cols-6 gap-2 text-xs">
                       {Object.keys(correlations).map((var1) => (
                         <div key={var1} className="space-y-2">
-                          <div className="font-medium text-gray-300 text-center">{var1}</div>
+                          <div className="font-medium text-slate-700 text-center">{var1}</div>
                           {Object.keys(correlations).map((var2) => (
                             <div
                               key={`${var1}-${var2}`}
-                              className="h-8 flex items-center justify-center rounded text-white text-xs font-medium"
+                              className="h-8 flex items-center justify-center rounded text-slate-900 text-xs font-medium"
                               style={{
                                 backgroundColor: `rgba(${correlations[var1][var2] > 0 ? "16, 185, 129" : "239, 68, 68"}, ${Math.abs(correlations[var1][var2])})`,
                               }}
@@ -933,18 +929,18 @@ export default function Home() {
                 <div className="grid gap-4">
                   {recommendations.length > 0 ? (
                     recommendations.map((rec, index) => (
-                      <Card key={index} className="bg-gray-800 border-gray-700">
+                      <Card key={index} className="bg-white border-blue-100">
                         <CardContent className="p-4">
                           <div className="flex items-start space-x-3">
                             <div
                               className={`p-2 rounded-full ${
                                 rec.priority === "critical"
-                                  ? "bg-red-900"
+                                  ? "bg-red-100 text-red-600"
                                   : rec.priority === "high"
-                                    ? "bg-orange-900"
+                                    ? "bg-orange-100 text-orange-600"
                                     : rec.priority === "medium"
-                                      ? "bg-yellow-900"
-                                      : "bg-green-900"
+                                      ? "bg-yellow-100 text-yellow-700"
+                                      : "bg-emerald-100 text-emerald-600"
                               }`}
                             >
                               {rec.type === "maintenance" ? (
@@ -959,7 +955,7 @@ export default function Home() {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center justify-between mb-2">
-                                <h4 className="font-medium text-white">{rec.title}</h4>
+                                <h4 className="font-medium text-slate-900">{rec.title}</h4>
                                 <Badge
                                   variant={
                                     rec.priority === "critical"
@@ -974,19 +970,19 @@ export default function Home() {
                                   {rec.priority}
                                 </Badge>
                               </div>
-                              <p className="text-sm text-gray-300 mb-2">{rec.description}</p>
-                              <p className="text-xs text-green-400 font-medium">{rec.impact}</p>
+                              <p className="text-sm text-slate-700 mb-2">{rec.description}</p>
+                              <p className="text-xs text-emerald-600 font-medium">{rec.impact}</p>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                     ))
                   ) : (
-                    <Card className="bg-gray-800 border-gray-700">
+                    <Card className="bg-white border-blue-100 shadow-sm">
                       <CardContent className="p-8 text-center">
-                        <CheckCircle className="h-12 w-12 mx-auto mb-3 text-green-400" />
-                        <h3 className="font-medium text-white mb-2">All Systems Operating Optimally</h3>
-                        <p className="text-sm text-gray-400">No recommendations at this time</p>
+                        <CheckCircle className="h-12 w-12 mx-auto mb-3 text-emerald-500" />
+                        <h3 className="font-medium text-slate-900 mb-2">All Systems Operating Optimally</h3>
+                        <p className="text-sm text-slate-600">No recommendations at this time</p>
                       </CardContent>
                     </Card>
                   )}
@@ -994,10 +990,10 @@ export default function Home() {
               </TabsContent>
 
               <TabsContent value="forecasting" className="space-y-4">
-                <Card className="bg-gray-800 border-gray-700">
+                <Card className="bg-white border-blue-100 shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-white">OEE Forecasting</CardTitle>
-                    <CardDescription className="text-gray-400">
+                    <CardTitle className="text-slate-900">OEE Forecasting</CardTitle>
+                    <CardDescription className="text-slate-600">
                       {forecastHorizon[0]}-hour forecast using the selected model
                     </CardDescription>
                   </CardHeader>
@@ -1010,9 +1006,9 @@ export default function Home() {
                       >
                         {forecastLoading ? "Generating Forecast..." : "Generate Forecast"}
                       </Button>
-                      {forecastError && <p className="mt-2 text-sm text-red-400">{forecastError}</p>}
+                      {forecastError && <p className="mt-2 text-sm text-red-500">{forecastError}</p>}
                       {forecastEvaluation && (
-                        <p className="mt-2 text-sm text-gray-300">
+                        <p className="mt-2 text-sm text-slate-700">
                           Holdout backtest ({forecastEvaluation.holdoutPoints} points): MAE {(forecastEvaluation.mae * 100).toFixed(2)}%, RMSE {(forecastEvaluation.rmse * 100).toFixed(2)}%, sMAPE {forecastEvaluation.smape.toFixed(2)}%
                         </p>
                       )}
@@ -1025,15 +1021,15 @@ export default function Home() {
                           forecast: d.predicted_oee * 100,
                         }))}
                       >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                        <XAxis dataKey="time" stroke="#9ca3af" fontSize={12} />
-                        <YAxis domain={[0, 100]} stroke="#9ca3af" fontSize={12} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#dbeafe" />
+                        <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
+                        <YAxis domain={[0, 100]} stroke="#64748b" fontSize={12} />
                         <Tooltip
                           contentStyle={{
-                            backgroundColor: "#1f2937",
-                            border: "1px solid #374151",
+                            backgroundColor: "#f8fbff",
+                            border: "1px solid #dbeafe",
                             borderRadius: "8px",
-                            color: "#f9fafb",
+                            color: "#0f172a",
                           }}
                         />
                         <Line type="monotone" dataKey="actual" stroke="#3b82f6" strokeWidth={2} dot={false} />
@@ -1047,15 +1043,15 @@ export default function Home() {
                         />
                       </LineChart>
                     </ResponsiveContainer> : (
-                      <div className="flex h-[300px] items-center justify-center rounded border border-dashed border-gray-600 text-sm text-gray-400">
+                      <div className="flex h-[300px] items-center justify-center rounded border border-dashed border-blue-200 text-sm text-slate-600">
                         Generate a forecast to view predictions and backtest metrics.
                       </div>
                     )}
 
                     <div className="grid grid-cols-4 gap-4 mt-4">
                       <div className="text-center">
-                        <p className="text-sm text-gray-400">Min Forecast</p>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-sm text-slate-600">Min Forecast</p>
+                        <p className="text-lg font-bold text-slate-900">
                           <DynamicValue
                             value={forecastData?.length ? Math.min(...forecastData.map((point) => point.predicted_oee * 100)) : null}
                             fallback="--"
@@ -1064,8 +1060,8 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-gray-400">Max Forecast</p>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-sm text-slate-600">Max Forecast</p>
+                        <p className="text-lg font-bold text-slate-900">
                           <DynamicValue
                             value={forecastData?.length ? Math.max(...forecastData.map((point) => point.predicted_oee * 100)) : null}
                             fallback="--"
@@ -1074,8 +1070,8 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-gray-400">Mean Forecast</p>
-                        <p className="text-lg font-bold text-white">
+                        <p className="text-sm text-slate-600">Mean Forecast</p>
+                        <p className="text-lg font-bold text-slate-900">
                           <DynamicValue
                             value={
                               forecastData?.length
@@ -1088,8 +1084,8 @@ export default function Home() {
                         </p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-gray-400">Trend</p>
-                        <p className="text-lg font-bold text-green-400">
+                        <p className="text-sm text-slate-600">Trend</p>
+                        <p className="text-lg font-bold text-emerald-600">
                           <DynamicValue
                             value={
                               forecastData && forecastData.length > 1
